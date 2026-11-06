@@ -1,0 +1,38 @@
+
+name: Build Zilla Play Windows installer
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out Zilla Play
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js on the cloud runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Build the Windows installer
+        run: npm run dist:win
+
+      - name: Upload the EXE installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zilla-Play-Windows-Installer
+          path: release/*.exe
+          if-no-files-found: error
+          retention-days: 14
